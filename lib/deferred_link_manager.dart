@@ -95,14 +95,15 @@ class BranchLinkManager {
     bool disableTrack = false,
     DeferredDeepLink? onLinkReceived,
   }) async {
-    FlutterBranchSdk.init(
+    await FlutterBranchSdk.init(
         useTestKey: useTestKey,
         enableLogging: enableLog,
         disableTracking: disableTrack);
-    FlutterBranchSdk.disableTracking(false);
 
     FlutterBranchSdk.listSession().listen((data) {
-      onLinkReceived?.call(data);
+      if (data.isNotEmpty) {
+        onLinkReceived?.call(data);
+      }
     });
   }
 
