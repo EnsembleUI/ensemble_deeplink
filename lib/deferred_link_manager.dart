@@ -78,6 +78,11 @@ class DeferredLinkManagerImpl extends DeferredLinkManager {
         throw LanguageError('Adjust Deeplink Provider is in development');
     }
   }
+
+  @override
+  void handleDeferredLink(String url, DeferredDeepLink onLinkReceived) {
+    BranchLinkManager().handleDeferredLink(url, onLinkReceived);
+  }
 }
 
 class BranchLinkManager {
@@ -109,6 +114,15 @@ class BranchLinkManager {
 
   void validate() {
     FlutterBranchSdk.validateSDKIntegration();
+  }
+
+  void handleDeferredLink(String url, DeferredDeepLink onLinkReceived) {
+    FlutterBranchSdk.listSession().listen((data) {
+      if (data.isNotEmpty) {
+        onLinkReceived.call(data);
+      }
+    });
+    FlutterBranchSdk.handleDeepLink(url);
   }
 
   Future<BranchResponse<dynamic>> createDeepLink(
