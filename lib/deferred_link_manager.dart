@@ -1,3 +1,4 @@
+import 'package:ensemble/deep_link_manager.dart';
 import 'package:ensemble/framework/error_handling.dart';
 import 'package:ensemble/framework/extensions.dart';
 import 'package:ensemble/framework/stub/deferred_link_manager.dart';
@@ -106,9 +107,15 @@ class BranchLinkManager {
         disableTracking: disableTrack);
 
     FlutterBranchSdk.listSession().listen((data) {
-      if (data.isNotEmpty) {
-        onLinkReceived?.call(data);
-      }
+      try {
+        DeepLinkNavigator().navigateToScreen(data);
+      } on Exception catch (_) {}
+
+      try {
+        if (data.isNotEmpty) {
+          onLinkReceived?.call(data);
+        }
+      } on Exception catch (_) {}
     });
   }
 
